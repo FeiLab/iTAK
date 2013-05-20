@@ -1,0 +1,420 @@
+Family Name:BBR/BPC
+Required Domain:PF06217
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:BES1
+Required Domain:PF05687
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:C2C2-Dof
+Required Domain:PF02701
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:CPP
+Required Domain:PF03638
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:E2F-DP
+Required Domain:PF02319
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:EIL
+Required Domain:PF04873
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:GeBP
+Required Domain:PF04504
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:GRAS
+Required Domain:PF03514
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:GRF
+Required Domain:PF08880#PF08879
+Forbidden Domain:
+Required Mode:all
+//
+Family Name:HRT
+Required Domain:HRT
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:HSF
+Required Domain:PF00447
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:LFY
+Required Domain:PF01698
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:LIM
+Required Domain:PF00412#PF00412
+Forbidden Domain:
+Required Mode:all
+//
+Family Name:MADS
+Required Domain:PF00319
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:NAC
+Required Domain:PF02365
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:PBF-2-like
+Required Domain:PF08536
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:PLATZ
+Required Domain:PF04640
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:RWP-RK
+Required Domain:PF02042
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:S1Fa-like
+Required Domain:PF04689
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:SBP
+Required Domain:PF03110
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:SRS
+Required Domain:PF05142
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:TCP
+Required Domain:PF03634
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:Trihelix
+Required Domain:Trihelix
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:TUB
+Required Domain:PF01167
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:ULT
+Required Domain:ULT
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:VOZ
+Required Domain:VOZ
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:WRKY
+Required Domain:PF03106
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:zf-HD
+Required Domain:PF04770
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:NOZZLE
+Required Domain:NOZZLE_Angio
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:CAMTA
+Required Domain:PF03859#PF00612
+Forbidden Domain:
+Required Mode:all
+//
+Family Name:C2C2-CO-like
+Required Domain:PF00643#PF06203
+Forbidden Domain:PF00320#PF04640
+Required Mode:all
+//
+Family Name:CSD
+Required Domain:PF00313
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:DBP
+Required Domain:DNC#PF00481
+Forbidden Domain:
+Required Mode:all
+//
+Family Name:Sigma70-like
+Required Domain:PF04542#PF04539#PF04545
+Forbidden Domain:
+Required Mode:all
+//
+Family Name:bZIP
+Required Domain:PF00170#PF07716#PF03131
+Forbidden Domain:PF00010
+Required Mode:one
+//
+Family Name:bHLH
+Required Domain:PF00010
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:C2C2-GATA
+Required Domain:PF00320
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:LUG
+Required Domain:LUFS
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:MBF1
+Required Domain:PF08523
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:C2C2-YABBY
+Required Domain:PF04690
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:HMG
+Required Domain:PF00505
+Forbidden Domain:PF04690#PF01388
+Required Mode:one
+//
+Family Name:Pseudo ARR-B
+Required Domain:PF06203#PF00072
+Forbidden Domain:
+Required Mode:all
+//
+Family Name:ARR-B_A
+Required Domain:PF00072#G2-like
+Forbidden Domain:PF06203
+Required Mode:all
+//
+Family Name:ARR-B
+Required Domain:PF00072#PF00249
+Forbidden Domain:PF06203
+Required Mode:all
+//
+Family Name:G2-like
+Required Domain:G2-like
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:MYB
+Required Domain:PF00249#PF00249
+Forbidden Domain:PF01388#PF00072#PF00176
+Required Mode:all
+//
+Family Name:ARID
+Required Domain:PF01388
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:SAP
+Required Domain:STER_AP
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:AUX/IAA
+Required Domain:PF02309
+Forbidden Domain:PF06507#PF02362
+Required Mode:one
+//
+Family Name:ARF
+Required Domain:PF06507
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:ABI3VP1
+Required Domain:PF02362
+Forbidden Domain:PF06507#PF00847
+Required Mode:one
+//
+Family Name:AP2-EREBP
+Required Domain:PF00847
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:SNF2
+Required Domain:PF00176
+Forbidden Domain:PF00628#PF00847
+Required Mode:one
+//
+Family Name:TAZ
+Required Domain:PF02135
+Forbidden Domain:PF00628
+Required Mode:one
+//
+Family Name:SET
+Required Domain:PF00856
+Forbidden Domain:PF00628#PF00096#PF03638
+Required Mode:one
+//
+Family Name:PHD
+Required Domain:PF00628
+Forbidden Domain:Alfin-like#PF02791#PF00046#PF02375#PF02373#PF00249#PF00642
+Required Mode:one
+//
+Family Name:C3H
+Required Domain:PF00642
+Forbidden Domain:PF00628#PF00176#PF00096
+Required Mode:one
+//
+Family Name:C2H2
+Required Domain:PF00096
+Forbidden Domain:PF00628
+Required Mode:one
+//
+Family Name:Jumonji
+Required Domain:PF02375#PF02373
+Forbidden Domain:PF00096#Alfin-like#PF01388
+Required Mode:one
+//
+Family Name:Alfin-like
+Required Domain:Alfin-like
+Forbidden Domain:PF02791#PF00046#PF02375#PF02373
+Required Mode:one
+//
+Family Name:DDT
+Required Domain:PF02791
+Forbidden Domain:Alfin-like#PF00046
+Required Mode:one
+//
+Family Name:HB
+Required Domain:PF00046#PF03790#PF03791
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:CCAAT
+Required Domain:PF02045#PF00808#CCAAT-Dr1#NF-YB#NF-YC
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:BSD
+Required Domain:PF03909
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:FAR1
+Required Domain:PF03101
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:FHA
+Required Domain:PF00498
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:LOB
+Required Domain:PF03195
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:mTERF
+Required Domain:PF02536
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:OFP
+Required Domain:PF04844
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:Tify
+Required Domain:PF06200
+Forbidden Domain:PF00320
+Required Mode:one
+//
+Family Name:TIG
+Required Domain:PF01833
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:VARL
+Required Domain:VARL
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:Zn-clus
+Required Domain:PF00172
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:Coactivator p15
+Required Domain:PF02229
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:GNAT
+Required Domain:PF00583
+Forbidden Domain:PF00628
+Required Mode:one
+//
+Family Name:IWS1
+Required Domain:PF08711#PF05909
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:MED6
+Required Domain:PF04934
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:MED7
+Required Domain:PF05983
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:RB
+Required Domain:PF01857
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:Rcd1-like
+Required Domain:PF04078
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:SOH1
+Required Domain:PF05669
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:SWI/SNF-BAF60b
+Required Domain:PF02201
+Forbidden Domain:
+Required Mode:one
+//
+Family Name:SWI/SNF-SWI3
+Required Domain:PF04433
+Forbidden Domain:PF00249
+Required Mode:one
+//
+Family Name:TRAF
+Required Domain:PF00651
+Forbidden Domain:PF07707#PF00917#PF03000#PF02135
+Required Mode:one
+//

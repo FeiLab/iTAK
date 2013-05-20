@@ -1,0 +1,517 @@
+# hmmscan :: search sequence(s) against a profile database
+# HMMER 3.0 (March 2010); http://hmmer.org/
+# Copyright (C) 2010 Howard Hughes Medical Institute.
+# Freely distributed under the GNU General Public License (GPLv3).
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# query sequence file:             test2seq
+# target HMM database:             WNK1_hmm
+# output directed to file:         out2
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query:       Solyc01g096540.1.1  [L=694]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    2.7e-23   67.6   0.4    5.6e-23   66.5   0.3    1.6  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   66.5   0.3   5.6e-23   5.6e-23       2      33 .]      61      92 ..      60      92 .. 0.97
+
+  Alignments for each domain:
+  == domain 1    score: 66.5 bits;  conditional E-value: 5.6e-23
+         PPC:4.1.5.1  2 RykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        Ry+evLGkGAfKtVY+AfD ++GiEVAW+ Vk
+  Solyc01g096540.1.1 61 RYSEVLGKGAFKTVYKAFDLLDGIEVAWSRVK 92
+                        ******************************98 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (694 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc09g077260.1.1  [L=732]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    4.8e-27   79.6   1.0    9.5e-27   78.6   0.7    1.5  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   78.6   0.7   9.5e-27   9.5e-27       1      33 []      24      56 ..      24      56 .. 0.99
+
+  Alignments for each domain:
+  == domain 1    score: 78.6 bits;  conditional E-value: 9.5e-27
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        gRy+e+LGkGA+KtVY+AfDe+eGiEVAWnqVk
+  Solyc09g077260.1.1 24 GRYNEILGKGASKTVYKAFDEYEGIEVAWNQVK 56
+                        8*******************************8 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (732 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.01
+# Mc/sec: 2.42
+//
+Query:       Solyc10g009190.1.1  [L=323]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    3.7e-15   41.5   0.7    3.7e-15   41.5   0.5    1.8  2  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   41.5   0.5   3.7e-15   3.7e-15       2      32 ..      19      49 ..      18      50 .. 0.97
+   2 ?   -2.3   0.1      0.19      0.19      12      17 ..     235     240 ..     234     242 .. 0.82
+
+  Alignments for each domain:
+  == domain 1    score: 41.5 bits;  conditional E-value: 3.7e-15
+         PPC:4.1.5.1  2 RykevLGkGAfKtVYrAfDeveGiEVAWnqV 32
+                        Ry+++LG GA K+VY ++D ve iE+AWnq+
+  Solyc10g009190.1.1 19 RYSDMLGGGAYKEVYIGYDRVEQIEIAWNQI 49
+                        ******************************7 PP
+
+  == domain 2    score: -2.3 bits;  conditional E-value: 0.19
+         PPC:4.1.5.1  12 fKtVYr 17 
+                         fK+VY 
+  Solyc10g009190.1.1 235 FKKVYT 240
+                         8****6 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (323 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc10g009510.1.1  [L=657]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    2.9e-23   67.5   1.9    5.4e-23   66.6   1.3    1.5  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   66.6   1.3   5.4e-23   5.4e-23       2      33 .]      32      63 ..      31      63 .. 0.97
+
+  Alignments for each domain:
+  == domain 1    score: 66.6 bits;  conditional E-value: 5.4e-23
+         PPC:4.1.5.1  2 RykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        Ry+evLGkGAfKtVY+AfD veGiEVAW+ Vk
+  Solyc10g009510.1.1 32 RYNEVLGKGAFKTVYKAFDVVEGIEVAWSRVK 63
+                        ******************************98 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (657 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc01g098260.1.1  [L=749]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+      4e-27   79.8   0.9    7.9e-27   78.9   0.6    1.5  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   78.9   0.6   7.9e-27   7.9e-27       1      33 []      24      56 ..      24      56 .. 0.99
+
+  Alignments for each domain:
+  == domain 1    score: 78.9 bits;  conditional E-value: 7.9e-27
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        gRy+e+LGkGA+KtVYrAfDe+eGiEVAWnqVk
+  Solyc01g098260.1.1 24 GRYNEILGKGASKTVYRAFDEYEGIEVAWNQVK 56
+                        8*******************************8 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (749 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc03g112640.1.1  [L=665]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    1.1e-26   78.4   2.2    2.1e-26   77.5   1.5    1.4  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   77.5   1.5   2.1e-26   2.1e-26       1      33 []      30      62 ..      30      62 .. 0.99
+
+  Alignments for each domain:
+  == domain 1    score: 77.5 bits;  conditional E-value: 2.1e-26
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        gRykevLGkGAfK+VYrAfDe+eGiEVAWnqVk
+  Solyc03g112640.1.1 30 GRYKEVLGKGAFKKVYRAFDELEGIEVAWNQVK 62
+                        8*******************************8 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (665 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc06g072620.1.1  [L=627]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    1.1e-26   78.4   2.2    1.9e-26   77.6   1.5    1.4  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   77.6   1.5   1.9e-26   1.9e-26       1      33 []      30      62 ..      30      62 .. 0.99
+
+  Alignments for each domain:
+  == domain 1    score: 77.6 bits;  conditional E-value: 1.9e-26
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        gRykevLGkGAfK+VYrAfDe+eGiEVAWnqVk
+  Solyc06g072620.1.1 30 GRYKEVLGKGAFKKVYRAFDELEGIEVAWNQVK 62
+                        8*******************************8 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (627 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc06g083590.1.1  [L=637]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    9.3e-25   72.2   0.6    2.6e-24   70.8   0.2    1.9  2  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   70.8   0.2   2.6e-24   2.6e-24       1      33 []      30      62 ..      30      62 .. 0.98
+   2 ?   -1.8   0.0      0.13      0.13      10      23 ..     352     365 ..     351     377 .. 0.72
+
+  Alignments for each domain:
+  == domain 1    score: 70.8 bits;  conditional E-value: 2.6e-24
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        gR++evLGkGA+KtVYrA+De+ G+EVAW+qV+
+  Solyc06g083590.1.1 30 GRFEEVLGKGAMKTVYRAIDELLGMEVAWSQVR 62
+                        8*******************************7 PP
+
+  == domain 2    score: -1.8 bits;  conditional E-value: 0.13
+         PPC:4.1.5.1  10 GAfKtVYrAfDeve 23 
+                         G ++ VY  fD v 
+  Solyc06g083590.1.1 352 GGVRHVYFPFDTVT 365
+                         77889999999874 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (637 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc07g049030.1.1  [L=291]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    1.1e-19   56.0   0.5    1.8e-19   55.3   0.4    1.3  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   55.3   0.4   1.8e-19   1.8e-19       1      32 [.      26      57 ..      26      58 .. 0.97
+
+  Alignments for each domain:
+  == domain 1    score: 55.3 bits;  conditional E-value: 1.8e-19
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqV 32
+                        gRy+e+LG GA+K+VYrAfD  eG  VAWnq+
+  Solyc07g049030.1.1 26 GRYAELLGHGAVKKVYRAFDIQEGRDVAWNQI 57
+                        8******************************8 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (291 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc07g066500.1.1  [L=305]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    4.5e-24   70.0   1.9    4.5e-24   70.0   1.3    2.0  2  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   70.0   1.3   4.5e-24   4.5e-24       1      33 []      24      56 ..      24      56 .. 0.99
+   2 ?   -1.8   0.0      0.13      0.13      17      27 ..     246     256 ..     246     256 .. 0.92
+
+  Alignments for each domain:
+  == domain 1    score: 70.0 bits;  conditional E-value: 4.5e-24
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        gRy+e+LG GA+K+VYrAfD++eGiEVAWnqVk
+  Solyc07g066500.1.1 24 GRYDELLGYGAVKKVYRAFDQEEGIEVAWNQVK 56
+                        8*******************************8 PP
+
+  == domain 2    score: -1.8 bits;  conditional E-value: 0.13
+         PPC:4.1.5.1  17 rAfDeveGiEV 27 
+                         +A+D v+ +EV
+  Solyc07g066500.1.1 246 KAMDKVKDLEV 256
+                         89****99998 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (305 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc08g083950.1.1  [L=587]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+    3.3e-24   70.5   0.0    5.7e-24   69.7   0.0    1.4  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   69.7   0.0   5.7e-24   5.7e-24       1      32 [.      28      59 ..      28      60 .. 0.98
+
+  Alignments for each domain:
+  == domain 1    score: 69.7 bits;  conditional E-value: 5.7e-24
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqV 32
+                        +Ry+e+LG+GAfKtVY+AfD+ +GiEVAWnq+
+  Solyc08g083950.1.1 28 IRYSEILGSGAFKTVYKAFDNIDGIEVAWNQI 59
+                        7******************************7 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (587 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc09g018620.1.1  [L=607]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model       Description
+    ------- ------ -----    ------- ------ -----   ---- --  --------    -----------
+      8e-25   72.5   0.5    1.6e-24   71.5   0.4    1.5  1  PPC:4.1.5.1 WNK like kinase - with no lysine kinase
+
+
+Domain annotation for each model (and alignments):
+>> PPC:4.1.5.1  WNK like kinase - with no lysine kinase
+   #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+ ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+   1 !   71.5   0.4   1.6e-24   1.6e-24       1      33 []      31      63 ..      31      63 .. 0.99
+
+  Alignments for each domain:
+  == domain 1    score: 71.5 bits;  conditional E-value: 1.6e-24
+         PPC:4.1.5.1  1 gRykevLGkGAfKtVYrAfDeveGiEVAWnqVk 33
+                        gRyke+LGkGA K VYrAfDe+ G+EVAWnqVk
+  Solyc09g018620.1.1 31 GRYKEILGKGATKIVYRAFDELLGMEVAWNQVK 63
+                        8*******************************8 PP
+
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (607 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         1  (1); expected 0.0 (0.001)
+Passed Fwd filter:                         1  (1); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               1  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc02g087590.1.1  [L=488]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model    Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each model (and alignments):
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (488 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         1  (1); expected 0.0 (0.02)
+Passed bias filter:                        1  (1); expected 0.0 (0.02)
+Passed Vit filter:                         0  (0); expected 0.0 (0.001)
+Passed Fwd filter:                         0  (0); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
+Query:       Solyc11g039390.1.1  [L=76]
+Scores for complete sequence (score includes all domains):
+   --- full sequence ---   --- best 1 domain ---    -#dom-
+    E-value  score  bias    E-value  score  bias    exp  N  Model    Description
+    ------- ------ -----    ------- ------ -----   ---- --  -------- -----------
+
+   [No hits detected that satisfy reporting thresholds]
+
+
+Domain annotation for each model (and alignments):
+
+   [No targets detected that satisfy reporting thresholds]
+
+
+Internal pipeline statistics summary:
+-------------------------------------
+Query sequence(s):                         1  (76 residues)
+Target model(s):                           1  (33 nodes)
+Passed MSV filter:                         0  (0); expected 0.0 (0.02)
+Passed bias filter:                        0  (0); expected 0.0 (0.02)
+Passed Vit filter:                         0  (0); expected 0.0 (0.001)
+Passed Fwd filter:                         0  (0); expected 0.0 (1e-05)
+Initial search space (Z):                  1  [actual number of targets]
+Domain search space  (domZ):               0  [number of targets reported over threshold]
+# CPU time: 0.00u 0.00s 00:00:00.00 Elapsed: 00:00:00.00
+# Mc/sec: inf
+//
