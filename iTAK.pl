@@ -1,6 +1,9 @@
 #!/usr/bin/perl
 
 =head
+v 1.3 May-20-2013
+      update some small bugs
+
 v 1.2 Aug-26-2011
       report unusual sequences
 
@@ -12,19 +15,21 @@ v 1.0 Dec-14-2010
 
 =cut
 
-#use strict;
+use strict;
+use warnings;
 use Cwd;
+use FindBin;
 use File::Basename;
 use Bio::SeqIO;
 use IO::File;
-use Getopt::Std;
 use Bio::SearchIO;
+use Getopt::Long;
 
 my $usage = q/
 UPDATE: Aug-26-2011
 VERSION: v1.2
 USAGE: 
-	Perl iTAK.pl [parameters]
+	perl iTAK.pl [parameters]
 
 	-i  [String]	Name of input sequence file in FASTA format (required)
 	-s  [String]	Type of input sequences ('p' for protein | 'n' for 
@@ -41,24 +46,28 @@ USAGE:
 #################################################################
 # Input Parameters                                              #
 #################################################################
-my %options;
+my ($help, $input_seq, $seq_format, $mode, $cpus, $output_fd, $debug);
 
-getopts('i:m:a:s:o:d', \%options) || die "$usage\nError getting options!";
+GetOptions(
+	"h"	=> \$help,
+	"i=s"	=> \$input_seq,
+	"s=s"	=> \$seq_format,
+	"m=s"	=> \$mode,
+	"a=i"	=> \$cpus,
+	"o=s"	=> \$output_fd,
+	"d"	=> \$debug
+);
 
-my $input_seq = 	$options{i} || die $usage."\nYou must provide input file (-i)!\n\n";
-
-my $seq_format = 	$options{s} || "p";
-
-my $mode = 		$options{m} || "b";
-
-my $cpus = 		$options{a} || 1;
-
-my $output_fd = 	$options{o} || $input_seq."_output";
-
-my $debug = 		$options{d} || 0;
+die $usage if $help;
+die $usage unless $input_seq;
+$seq_format ||= "p";
+$mode ||= "b";
+$cpus ||= 1;
+$output_fd ||= $input_seq."_output";
+$debug ||= 0;
 
 #################################################################
-#--------------Check input files and parameters-----------------#
+# Check input files and parameters 				#
 #################################################################
 
 #################################################################
@@ -67,12 +76,12 @@ my $debug = 		$options{d} || 0;
 # 2. mode p, just identify protein kinases			#
 # 3. mode b, identify both					#
 #################################################################
-unless ($mode =~ m/^t|p|b$/i) { die $usage."\nPlease input right parameter for '-m'\n"; }
+unless ($mode =~ m/^t|p|b$/i) { die $usage."\nPlease input correct mode\n"; }
 
 #################################################################
 # check input_seq files						#
-# 1. seq_format eq 1 means input seqs are DNA			#
-# 2. seq_format eq 0 (default) means input seqs are Proteins	#
+# 1. seq_format eq n means input seqs are DNA			#
+# 2. seq_format eq p (default) means input seqs are Proteins	#
 # if you input DNA, it can be converted to protein, if your	#
 # input seq and seq_format are not match, will die		#
 #################################################################
@@ -82,15 +91,15 @@ my ($input_seq_hash, $converted_seq_hash) = seq_to_hash($input_seq);
 
 if ($seq_format eq "N" || $seq_format eq "n")
 {
-	if ( scalar(keys(%$input_seq_hash)) > 0 ) { 
+	if ( scalar(keys(%$input_seq_hash)) > 0 ) 
+	{ 
 		print "\nYou input contains protein or unusual sequences!\n\n";
 
 		my %unusual_list;
-
-		foreach my $aaa (sort keys %$input_seq_hash) {
-			print ">".$aaa."\n".$$input_seq_hash{$aaa}."\n";
-			my $bbb = $aaa; $bbb =~ s/_\d$//ig;
-			$unusual_list{$bbb} = 1;
+		foreach my $id (sort keys %$input_seq_hash) {
+			print ">".$id."\n".$$input_seq_hash{$id}."\n";
+			my $pid = $id; $pid =~ s/_\d$//ig;
+			$unusual_list{$pid} = 1;
                 }
 
 		print "\nUnusual sequence IDs:\n\n";
@@ -98,23 +107,21 @@ if ($seq_format eq "N" || $seq_format eq "n")
 			print $id."\t";
 		}
 		print "\n\n";
-
 		exit;
 	}
 	else { %seq_hash = %$converted_seq_hash; }
 }
 elsif ($seq_format eq "P" || $seq_format eq "p")
 {
-	if ( scalar(keys(%$converted_seq_hash)) > 0) {
-
+	if ( scalar(keys(%$converted_seq_hash)) > 0) 
+	{
 		print "\nYour input contains DNA or unusual sequences!\n\n";
 		
 		my %unusual_list;
-
-		foreach my $aaa (sort keys %$converted_seq_hash) { 
-			print ">".$aaa."\n".$$converted_seq_hash{$aaa}."\n";
-			my $bbb = $aaa; $bbb =~ s/_\d$//ig;
-			$unusual_list{$bbb} = 1;
+		foreach my $id (sort keys %$converted_seq_hash) { 
+			print ">".$id."\n".$$converted_seq_hash{$id}."\n";
+			my $pid = $id; $pid =~ s/_\d$//ig;
+			$unusual_list{$pid} = 1;
 		}
 
 		print "\nUnusual sequence IDs:\n\n";
@@ -132,25 +139,11 @@ else
 }
 
 #################################################################
-#------------------Default and output Floders-------------------#
-#################################################################
-
-#################################################################
 # create temp folder and then store seq to temp			#
 #################################################################
-
-my $current_dir = getcwd;
-my $temp_dir = $current_dir."/".$input_seq."_temp";
-
-if (-e $output_dir)
-{
-	system "rm -r -f $temp_dir";
-	mkdir($temp_dir);
-}
-else
-{
-	mkdir($temp_dir);
-}
+my $temp_dir = $input_seq."_itak_temp";
+if (-e $temp_dir) { die "Error, temp folder exist, please delete it before running iTAK\n";  }
+else { mkdir($temp_dir); }
 
 my $protein_seq = $temp_dir."/protein_seq";
 my $pfh = IO::File->new(">".$protein_seq) || die "can not open protein sequence file: $protein_seq $!\n";
@@ -163,31 +156,17 @@ $pfh->close;
 #################################################################
 # check and create output folder				#
 #################################################################
-
-my $output_dir = $current_dir."/".$output_fd;
-
-if (-e $output_dir)
-{
-	system "rm -rf $output_dir";
-	mkdir($output_dir);
-}
-else
-{
-	mkdir($output_dir);
-}
+my $output_dir = $output_fd;
+if (-e $output_dir ) { die "Error, output folder exist, please delete it before running iTAK\n"; }
+else { mkdir($output_dir); }
 
 #################################################################
 #------------------Varialbes that Default Set-------------------#
 #################################################################
-
-my $program_dir;
-if ($0 =~ m{^/}) { $program_dir = dirname($0);}
-else { $program_dir = dirname("$current_dir/$0"); }
-my $bin_dir =  $program_dir."/bin";
-my $dbs_dir =  $program_dir."/database";
-
-unless (-e $bin_dir) { die "bin directory does not exist.\n"; }
-unless (-e $dbs_dir) { die "database directory does not exist.\n"; }
+my $bin_dir = ${FindBin::RealBin}."/bin";
+my $dbs_dir = ${FindBin::RealBin}."/database";
+unless (-e $bin_dir) { die "bin directory does not exist.\n$bin_dir\n"; }
+unless (-e $dbs_dir) { die "database directory does not exist.\n $dbs_dir\n"; }
 
 #################################################################
 #--------Default Variables for Transcription Factors------------#
@@ -214,7 +193,6 @@ my %tf_family_cat = tf_family_cat_to_hash($tf_cat);
 #################################################################
 # GA score table for Transcription Factors			#
 #################################################################
-
 my $ga_table = $dbs_dir."/GA_table";	# GA score and Desc from PfamA, dependend one rules, prepared file
 unless (-s $ga_table) { die "GA score and Desc do not exist.\n"; }
 my ($ga_hash, $desc_hash) = ga_to_hash($ga_table);	
@@ -237,80 +215,73 @@ my $pk_desc = $dbs_dir."/PK_class_desc";
 unless (-s $pk_desc) { die "protein kinase descriptions do not exist.\n"; }
 my $pkid_des = pk_to_hash($pk_desc);
 
-#################################################################
-# parameters end                                                #
-#################################################################
+# ======== parameters end ========
 
 #################################################################
-#--------------------------Main Part----------------------------#
+# main								#
 #################################################################
 
-# Step1. using all seqs do HMM search against PfamA+Self-build HMM or plantPKhmm
+# Step 1 
+# using all input seqs to perform hmmscan against PfamA + Self-build HMM
+# parse the hmmscan results 
 my $tmp_hmm_result = $temp_dir."/temp_hmm3_result"; 
-
 my $hmmscan_command = $bin_dir."/hmmscan --acc --notextw --cpu $cpus -o $tmp_hmm_result $hmm3_db $protein_seq";
-
 print $hmmscan_command if $debug == 1;
-
-unless (-s $tmp_hmm_result)
-{	
-	system($hmmscan_command) && die "Error at hmmscan command: $hmmscan_command\n";
-}
-
+unless (-s $tmp_hmm_result){ system($hmmscan_command) && die "Error at hmmscan command: $hmmscan_command\n"; }
 my ($all_hits, $all_detail) = parse_hmmscan_result($tmp_hmm_result);
 
-# Step2 parse hmmscan result using TFs prediction subroutine
+# Step 2
+# the parsed hmmscan result was used in TFs prediction
 my $tmp_rule = $tf_rule;
-
 my ($tmp_align, $tmp_family) = identify_domain($all_hits, $all_detail, $tmp_rule);
 
+# Step3
+# output the TFs prediction result 
 if ($mode =~ m/^t|b$/i)
 {
-    if ($tmp_family)
-    {
-	my $tf_family = $output_dir."/".$input_seq."_tf_family";
-	my $tf_align  = $output_dir."/".$input_seq."_tf_align";
-	my $tf_seq    = $output_dir."/".$input_seq."_tf_seq";
+	if ($tmp_family)
+    	{
+		my $tf_family = $output_dir."/".$input_seq."_tf_family";
+		my $tf_align  = $output_dir."/".$input_seq."_tf_align";
+		my $tf_seq    = $output_dir."/".$input_seq."_tf_seq";
 
-	my %pid; my %tf;
+		my %pid; my %tf;
 
-	my @num = split(/\n/, $tmp_family);
-	foreach my $line (@num)
-	{
-		my @a = split(/\t/, $line);
-		$pid{$a[0]} = 1;
-		$tf{$a[1]} = 1;
+		my @num = split(/\n/, $tmp_family);
+		foreach my $line (@num)
+		{
+			my @a = split(/\t/, $line);
+			$pid{$a[0]} = 1;
+			$tf{$a[1]} = 1;
+		}
+
+		my $aafh = IO::File->new(">".$tf_family) || die "Can not open transcription factor classification file: $tf_family $!\n";
+		foreach my $tf_line (@num)
+		{
+			my @tf_m = split(/\t/, $tf_line);
+			print $aafh $tf_m[0]."\t".$tf_m[1]."\t".$tf_family_cat{$tf_m[1]}."\n";
+		}
+		$aafh->close;
+
+		my $bbfh = IO::File->new(">".$tf_align) || die "can not open transcription factor alignment file: $tf_align $!\n";
+		print $bbfh $tmp_align;
+		$bbfh->close;
+
+		my $ccfh = IO::File->new(">".$tf_seq) || die "can not open transcription factor alignment file: $tf_seq $!\n";
+		my @s = split(/\n/, $tmp_family);
+		foreach my $ccc (@s)
+		{
+			my @ss = split(/\t/, $ccc, 2);
+			print $ccfh ">".$ss[0]."\n".$seq_hash{$ss[0]}."\n";
+		}
+		$ccfh->close;
+
+		print scalar(keys(%pid))." transcription factors were identified.\n";
 	}
-
-	my $aafh = IO::File->new(">".$tf_family) || die "Can not open transcription factor classification file: $tf_family $!\n";
-
-	foreach my $tf_line (@num)
+	else
 	{
-		my @tf_m = split(/\t/, $tf_line);
-		print $aafh $tf_m[0]."\t".$tf_m[1]."\t".$tf_family_cat{$tf_m[1]}."\n";
-	}
-
-	$aafh->close;
-
-	my $bbfh = IO::File->new(">".$tf_align) || die "can not open transcription factor alignment file: $tf_align $!\n";
-	print $bbfh $tmp_align;
-	$bbfh->close;
-
-	my $ccfh = IO::File->new(">".$tf_seq) || die "can not open transcription factor alignment file: $tf_seq $!\n";
-	my @s = split(/\n/, $tmp_family);
-	foreach my $ccc (@s)
-	{
-		my @ss = split(/\t/, $ccc, 2);
-		print $ccfh ">".$ss[0]."\n".$seq_hash{$ss[0]}."\n";
-	}
-	$ccfh->close;
-
-	print scalar(keys(%pid))." transcription factors were identified.\n";
-    }
-    else
-    {
-	print "No transcription factor was identified.\n";
-    }
+		print "No transcription factor was identified.\n";
+    	}
 }
 
 #########################################################
@@ -322,34 +293,37 @@ if ($mode =~ m/^t|b$/i)
 if ($mode =~ m/^p|b$/i)
 {
 	# Step 3.1 produce protein kinase sequence
+	# pkinase_id has the protein ID with high GA score in Pfam Kinase domain
+	# key: gene_id, value: 1; 
 	my %pkinase_id = cutoff($all_hits);
 
+	# pkinase_aln
+	# key: gene_id, value: align detail for gene
 	my %pkinase_aln = aln_to_hash($all_detail);
 
 	my $protein_kinase_seq = $output_dir."/".$input_seq."_pkseq";
 
 	my $pk_seq_num = scalar(keys(%pkinase_id));
 
-    if ($pk_seq_num > 0)
-    {
-	my $pk_fh = IO::File->new(">".$protein_kinase_seq) || die "Can not open protein kinase sequence file: $protein_kinase_seq\n";
-
-	foreach my $pid (sort keys %pkinase_id)
+	if ($pk_seq_num > 0)
 	{
-		if (defined $seq_hash{$pid}) 
+		my $pk_fh = IO::File->new(">".$protein_kinase_seq) || die "Can not open protein kinase sequence file: $protein_kinase_seq\n";
+		foreach my $pid (sort keys %pkinase_id)
 		{
-			print $pk_fh ">".$pid."\n".$seq_hash{$pid}."\n";
+			if (defined $seq_hash{$pid}) 
+			{
+				print $pk_fh ">".$pid."\n".$seq_hash{$pid}."\n";
+			}
+			else
+			{
+				print "Error! no sequences match to this id $pid\n";
+			}
 		}
-		else
-		{
-			print "Error! no sequences match to this id $pid\n";
-		}
-	}
-	$pk_fh->close;
+		$pk_fh->close;
 
-	# Step 3.3 Get Protein Kinases Classification using hmmscan
-	# Step 3.3.1 hmmscan
-	my $tmp_pk_hmmpfam_3 = "$temp_dir/temp_hmm3_result2";
+		# Step 3.3 Get Protein Kinases Classification using hmmscan
+		# Step 3.3.1 hmmscan
+		my $tmp_pk_hmmpfam_3 = "$temp_dir/temp_hmm3_result2";
 
 	my $hmmscan_command3 = $bin_dir."/hmmscan --acc --notextw --cpu $cpus -o $tmp_pk_hmmpfam_3 $plantp_hmm_3 $protein_kinase_seq";
 
@@ -392,7 +366,7 @@ if ($mode =~ m/^p|b$/i)
 
 		if (defined $pkinase_aln{$ppid})
 		{
-			print $al_fh $pkinase_aln{$pid};
+			print $al_fh $pkinase_aln{$ppid};
 		}
 		else
 		{
@@ -425,9 +399,9 @@ if ($mode =~ m/^p|b$/i)
 #################################################################
 # delete temp folder						#
 #################################################################
-my $cmd = "rm -rf $temp_dir";
-
-system($cmd) && die "Error at $cmd\n";
+my $remove_temp_cmd = "rm -rf $temp_dir";
+print "remove temp folder: ".$remove_temp_cmd."\n";
+#system($remove_temp_cmd) && die "Error at $remove_temp_cmd\n";
 
 #################################################################
 # finished							#
@@ -469,9 +443,24 @@ sub ga_to_hash
 
  Input: hmmscan result file name
 
- Output1: best hits info
- Output2: alignment of best hits info
- 
+ Output1: detail hits info, format is below:
+          GeneID	PfamID		GA	Evalue
+	  AT2G34620.1	PF02536.7	242.2	4.5e-72
+
+ Output2: alignment of hits into, format is below:
+	  1. GeneID      -- AT1G01140.1
+	  2. PfamID      -- PF00069.18
+	  3. Query Start -- 19
+          4. Query End   -- 274
+	  5. Hit Start   -- 1
+          6. Hit End     -- 260
+          7. Query Seq   -- YEMGRTLGEGSFAKVKYAKNTVTGDQAAIKILDREKVF....
+	  8. Alignment   -- ye++++lG+Gsf+kV  ak+  tg++ A+Kil++e+  ....
+	  9. Hit Seq     -- yelleklGsGsfGkVykakkkktgkkvAvKilkkeeek....
+          10. GA Score   -- 241.4
+          11. Evalue     -- 6.9e-72 
+          12. Description-- Protein kinase domain
+          13. Qeury Len  -- 448
 =cut
 sub parse_hmmscan_result
 {
@@ -543,7 +532,7 @@ sub parse_hmmscan_result
 				{
 					for(my $ih=1; $ih<@hits_content; $ih++)
 					{
-						$one_hit = ">>".$hits_content[$ih];
+						my $one_hit = ">>".$hits_content[$ih];
 						($hsp_info, $hsp_detail) = parse_align($one_hit, $query_name, $query_length);
 						$result_out1.= $hsp_info;
 						$result_out2.= $hsp_detail;
@@ -602,7 +591,7 @@ sub parse_align
 	#########################################################
 	# get query string, hit string, match string of HSP	#
 	#########################################################
-	my ($query_string, $hit_string, $match_string);
+	my ($query_string, $hit_string, $match_string, $hsp_length, $align_pos, $match_start);
 
 	my @domain = split(/== domain/, $hsp_info);
 
@@ -638,7 +627,7 @@ sub parse_align
 			#################################################
 			# get match string of HSP			#
 			#################################################
-			elsif ( $match_start == 1 )
+			elsif (defined $match_start && $match_start == 1 )
 			{
 				$match_string = substr($domain_line[$k], $align_pos, $hsp_length);
 				$match_start = 0;
@@ -658,13 +647,14 @@ sub parse_align
 			}
 
 		}
-			$score   = $dMatch[3];
-				$evalue  = $dMatch[6];
-
-				$hmmfrom = $dMatch[7];
-				$hmmto	 = $dMatch[8];
-				$seqfrom = $dMatch[10];
-				$seqto   = $dMatch[11];
+		
+		#where these code come from? 
+		#$score   = $dMatch[3];
+		#$evalue  = $dMatch[6];
+		#$hmmfrom = $dMatch[7];
+		#$hmmto	  = $dMatch[8];
+		#$seqfrom = $dMatch[10];
+		#$seqto   = $dMatch[11];
 
 		$output1.="$query_name\t$hit_id\t$info[3]\t$info[6]\n";
 		$output2.="$query_name\t$hit_id\t$info[10]\t$info[11]\t$info[7]\t$info[8]\t$query_string\t$match_string\t$hit_string\t$info[3]\t$info[6]\t$hit_desc\t$query_length\n";
@@ -681,9 +671,9 @@ sub parse_align
 	2. gathering score hash, PF id ; GA score; 
                                  key      vaule
 
- Return: hash1 : seq_id   domain_id1 \t domain_id2 \t ... \t domain_idn
- Return: hash2 : 
-
+ Return: hash1 -- key: seq_id,    value: domain_id1 \t domain_id2 \t ... \t domain_idn
+ Return: hash2 -- key: domain_id, value: PfamID
+ Retrun: hash3 -- key: domain_id, value: SeqID \t PfamID \t 
 =cut
 sub parse_format_result
 {
@@ -726,7 +716,7 @@ sub parse_format_result
 		#################################################
 		if ($valued == 1)
 		{
-			$uid++; $zero = "";
+			$uid++; my $zero = "";
 			my $rlen = $len-length($uid);
 			for(my $l=0; $l<$rlen; $l++)
 			{
@@ -751,54 +741,33 @@ sub parse_format_result
 
 =head2 parse_rule
 
- Function: parse rule file, return two hash : family_name  required_domains && family_name  forbidden_domains
+ Function: parse rule file, return three hash.
 
  Input: rule_list (file)
 
  Return:
-	returen array: (\%hash1, \%hash2) ; hash1 is required, hash2 is fobidden
-	                key             value
-	return hash1 : family_name     domain_id1 \t domain_id2 \t ... \t domain_idn
-	                key             value
-	return hash2 : family_name     domain_id1 \t domain_id2 \t ... \t domain_idn
-
+	return hash1 -- key: family_name, value: domain_id1 # domain_id2 # ... # domain_idn
+	return hash2 -- key: family_name, value: domain_id1 # domain_id2 # ... # domain_idn
+	return hash3 -- key: family_name, value: mode
 =cut
 sub parse_rule
 {
 	my $rule_file = shift;
 
 	my %required; my %forbidden; my %mode;
-
-	my $family_name; my $required_d; my $forbidden_d; my $required_m;
+	my ($family_name, $required_d, $forbidden_d, $required_m);
  
-	my $rufh = IO::File->new($rule_file) || die "Can not open rule file $rule_file $! \n";
-	while(my $rufh_line = <$rufh>)
+	my $fh = IO::File->new($rule_file) || die "Can not open rule file $rule_file $! \n";
+	while(<$fh>)
 	{
-		chomp($rufh_line);
+		chomp;
+		my @a = split(/:/, $_, 2);
 
-		my @rmm = split(/:/, $rufh_line);
-
-		if ($rufh_line =~ m/^Family Name/)
-		{
-			$family_name = $rmm[1];
-		}
-
-		if ($rufh_line =~ m/^Required Domain/)
-		{
-			$required_d = $rmm[1];
-		}
-
-		if ($rufh_line =~ m/^Forbidden Domain/)
-		{
-			$forbidden_d = $rmm[1];
-		}
-
-		if ($rufh_line =~ m/^Required Mode/)
-		{
-			$required_m = $rmm[1];
-		}
-
-		if ($rufh_line eq "//")
+		if ($a[0] eq 'Family Name') 	{ $family_name = $a[1]; }
+		if ($a[0] eq 'Required Domain')	{ $required_d = $a[1];  }
+		if ($a[0] eq 'Forbidden Domain'){ $forbidden_d = $a[1]; }
+		if ($a[0] eq 'Required Mode')	{ $required_m = $a[1];  }
+		if ($_ eq "//")
 		{
 			$required{$family_name} = $required_d;
 			$forbidden{$family_name}= $forbidden_d;
@@ -806,7 +775,7 @@ sub parse_rule
 			$family_name = ""; $required_d = ""; $forbidden_d = ""; $required_m = "";
 		}
 	}
-	$rufh->close;
+	$fh->close;
 
 	return (\%required, \%forbidden, \%mode);
 }
@@ -826,48 +795,37 @@ sub get_domain_id
 {
 	my ($rule_list_file, $mode) = @_;
 
-	my $rlfh = IO::File->new($rule_list_file) || die "can not open rule list file $!\n";
+	my %out_hash; my $family_name;
 
-	my %out_hash;
-
-	my $family_name;
-
-	while(my $rlfh_line = <$rlfh>)
+	my $fh = IO::File->new($rule_list_file) || die "can not open rule list file $!\n";
+	while(<$fh>)
 	{
-		chomp($rlfh_line);
+		chomp;
+		my @a = split(/:/, $_, 2);
+		if ($a[0] eq 'Family Name') { $family_name = $a[1]; }
 
-		if ($rlfh_line =~ m/^Family Name:/) 
+		if ($a[0] eq 'Required Domain' || $a[0] eq 'Forbidden Domain')
 		{
-			$family_name = $rlfh_line;
-			$family_name =~ s/^Family Name://;
-		}
+			my @b;
+			if ($a[1]) { @b = split(/#/, $a[1]); }
 
-		if ($rlfh_line =~ m/^Required Domain:/ || $rlfh_line =~ m/^Forbidden Domain:/)
-		{
-			my @mma = split(/:/, $rlfh_line);
-			my @mmb;
-			if ($mma[1])
+			if ($mode == 1)
 			{
-				@mmb = split(/#/, $mma[1]);
-			}
-
-			if ($mode == 1 )
-			{
-				foreach my $out_domain_id (@mmb)
+				foreach my $out_domain_id (@b)
 				{
 				    if ($out_domain_id =~ m/\w+/)
 				    {
-					unless (defined $out_hash{$out_domain_id}) { $out_hash{$out_domain_id} = 1; }
+					$out_hash{$out_domain_id} = 1;
 				    }
 				}
 			}
-			elsif( $mode == 2 && $rlfh_line =~ m/^Required Domain:/)
+			elsif( $mode == 2 && $a[0] eq 'Required Domain')
 			{
-				foreach my $out_domain_id (@mmb)
+				foreach my $out_domain_id (@b)
 				{
-				    if($out_domain_id =~ m/\w+/)
+				    if ($out_domain_id =~ m/\w+/)
 				    {
-					if (defined $out_hash{$out_domain_id}) { $out_hash{$out_domain_id} .= "\t".$family_name; }
+					if (defined $out_hash{$out_domain_id}) { $out_hash{$out_domain_id}.= "\t".$family_name; }
 					else { $out_hash{$out_domain_id} = $family_name; }
 				    }
 				}
@@ -878,7 +836,7 @@ sub get_domain_id
 			}
 		}	
 	}
-	$rlfh->close;
+	$fh->close;
 
 	return %out_hash;
 }
@@ -971,7 +929,9 @@ sub check_family
 }
 
 =head2 identify_domain
+ 
  identify Transcription Factors conde + finde Protein Kinases domains 
+
 =cut
 sub identify_domain
 {
@@ -981,23 +941,24 @@ sub identify_domain
 	my $family = "";
 
 	# 1. parse hmmscan result
-	#my ($all_hits, $all_detail) = parse_hmmscan_result($hmm_result);
+	# my ($all_hits, $all_detail) = parse_hmmscan_result($hmm_result);
 
 	# 2. Using GA score and e-value filter the all hits
+	# $pid_did    -- key: protein sequence id;  value: domain order id
+	# $hsp_hit    -- key: domain order id;      value: PfamID
+	# $hsp_detail -- key: domain order id;      value: aligment_detail
 	my ($pid_did, $hsp_hit, $hsp_detail) = parse_format_result($all_detail, $ga_hash);
 
 	# 3. Parse rule list file to produce rules
 	my ($required_pack, $forbidden_pack, $rule_mode) = parse_rule($rule);
-
 	my %required = %$required_pack; my %forbidden = %$forbidden_pack; my %rule_mode = %$rule_mode;
 
 	my %required_domain = get_domain_id($rule, 2);
 	print "\nThere are ".scalar(keys(%required_domain))." required domains for TF classification\n" if $debug == 1;
 
 	# 4. Classify the proteins and output the results to files;
-
-    foreach my $protein_id (sort keys %$pid_did)
-    {
+    	foreach my $protein_id (sort keys %$pid_did)
+    	{
 		#########################################################
 		# for transcription factors				#
 		#########################################################
@@ -1005,15 +966,16 @@ sub identify_domain
 
 		my @did = split(/\t/, $$pid_did{$protein_id});
 
-		my $convert_domain = ""; # convert uid do domain id for one hit;
-		my $hit_alignment = ""; # get alignment for one hit;
+		my $convert_domain = "";	# convert uid to domain id for one hit;
+		my $hit_alignment = "";		# get alignment for one hit;
+
 		for(my $ci=0; $ci<@did; $ci++)
 		{
 			my $c_domain_id = $$hsp_hit{$did[$ci]};
 			$convert_domain = $convert_domain."\t".$c_domain_id;
 
 			my $hsp_alignment = $$hsp_detail{$did[$ci]};
-			$hit_alignment .= $hsp_alignment."\n"
+			$hit_alignment.=$hsp_alignment."\n";
 		}
 		$convert_domain =~ s/^\t//;
 
@@ -1025,99 +987,95 @@ sub identify_domain
 
 			if (defined $required_domain{$domain_id} && $is_family == 0 )
 			{
-			my @familys = split(/\t/, $required_domain{$domain_id});
+				my @familys = split(/\t/, $required_domain{$domain_id});
 
-			foreach my $fn (@familys)
-			{
-				my @this_required = split(/#/, $required{$fn});
-
-				my @this_forbidden;
-
-				if ($forbidden{$fn} )
+				foreach my $fn (@familys)
 				{
-					@this_forbidden = split(/#/, $forbidden{$fn});
-				}
+					my @this_required = split(/#/, $required{$fn});
 
-				my $mode_r = $rule_mode{$fn};	
+					my @this_forbidden;
+
+					if ( $forbidden{$fn} )
+					{
+						@this_forbidden = split(/#/, $forbidden{$fn});
+					}
+
+					my $mode_r = $rule_mode{$fn};	
 	
-				$is_family = check_family(\@convert_domain, \@this_required, \@this_forbidden, $mode_r);
-				#$is_family =1;
-				#print $is_family."\n";
-				if ($is_family == 1) 
-				{
-					if ($fn eq "ARR-B_A") { $fn = "ARR-B"; }
+					$is_family = check_family(\@convert_domain, \@this_required, \@this_forbidden, $mode_r);
+
+					if ($is_family == 1) 
+					{
+						if ($fn eq "ARR-B_A") { $fn = "ARR-B"; }
 				 
-					$family.=$protein_id."\t".$fn."\n";
-
-					$alignment.= $hit_alignment;
-
-					last; 
+						$family.=$protein_id."\t".$fn."\n";
+						$alignment.= $hit_alignment;
+						last; 
+					}
 				}
 			}
-		}
 
-		if ($is_family == 1) { last; }
-	}
+			if ($is_family == 1) { last; }
+		}	
 
-	unless ($is_family == 1) 
-	{
-		#################################################
-		# to check myb-related				#
-		#################################################
-		my $is_a = 0; my $not_is_a = 0;
-		for (my $dii=0; $dii<@did; $dii++)
-		{
-			if (    $$hsp_hit{$did[$dii]} eq "PF00249" ) { $is_a = 1; }
-			if (    $$hsp_hit{$did[$dii]} eq "PF01388" ||
-				$$hsp_hit{$did[$dii]} eq "PF00072" ||
-				$$hsp_hit{$did[$dii]} eq "PF00176" ||
-				$$hsp_hit{$did[$dii]} eq "G2-like" ||
-				$$hsp_hit{$did[$dii]} eq "Trihelix" )
-			{ $not_is_a = 1; }
-
-		}
-
-		if ($is_a == 1 && $not_is_a == 0)
-		{
-			$family.=$protein_id."\t"."MYB\n";
-			$alignment.= $hit_alignment;
-		}
-
-		#################################################
-		# to check orphans				#
-		#################################################
-		my $is_orphans = 0;
-		for(my $dii=0; $dii<@did; $dii++)
-		{
-			if (
-				$$hsp_hit{$did[$dii]} eq "PF06203" || 
-				$$hsp_hit{$did[$dii]} eq "PF00643" || 
-				$$hsp_hit{$did[$dii]} eq "PF00072" || 
-				$$hsp_hit{$did[$dii]} eq "PF00412" ||
-				$$hsp_hit{$did[$dii]} eq "PF02671" || 
-				$$hsp_hit{$did[$dii]} eq "PF03925" || 
-				$$hsp_hit{$did[$dii]} eq "PF09133" || 
-                                $$hsp_hit{$did[$dii]} eq "PF09425" 
-			   )
+	    	unless ($is_family == 1) 
+	    	{
+			#################################################
+			# to check myb-related				#
+			#################################################
+			my $is_a = 0; my $not_is_a = 0;
+			for (my $dii=0; $dii<@did; $dii++)
 			{
-				$is_orphans = 1;
+				if (    $$hsp_hit{$did[$dii]} eq "PF00249" ) { $is_a = 1; }
+				if (    $$hsp_hit{$did[$dii]} eq "PF01388" ||
+					$$hsp_hit{$did[$dii]} eq "PF00072" ||
+					$$hsp_hit{$did[$dii]} eq "PF00176" ||
+					$$hsp_hit{$did[$dii]} eq "G2-like" ||
+					$$hsp_hit{$did[$dii]} eq "Trihelix" )
+				{ $not_is_a = 1; }
 			}
-		}
 
-		if ($is_orphans == 1)
-		{
-			$family.=$protein_id."\t"."Orphans\n";
-			$alignment.= $hit_alignment;
-		}
-	}
-    #######
-    }
-    return ($alignment, $family);
+			if ($is_a == 1 && $not_is_a == 0)
+			{
+				$family.=$protein_id."\t"."MYB\n";
+				$alignment.= $hit_alignment;
+			}
+
+			#################################################
+			# to check orphans				#
+			#################################################
+			my $is_orphans = 0;
+			for(my $dii=0; $dii<@did; $dii++)
+			{
+				if (
+					$$hsp_hit{$did[$dii]} eq "PF06203" || 
+					$$hsp_hit{$did[$dii]} eq "PF00643" || 
+					$$hsp_hit{$did[$dii]} eq "PF00072" || 
+					$$hsp_hit{$did[$dii]} eq "PF00412" ||
+					$$hsp_hit{$did[$dii]} eq "PF02671" || 
+					$$hsp_hit{$did[$dii]} eq "PF03925" || 
+					$$hsp_hit{$did[$dii]} eq "PF09133" || 
+	                                $$hsp_hit{$did[$dii]} eq "PF09425" 
+				   )
+				{
+					$is_orphans = 1;
+				}
+			}
+
+			if ($is_orphans == 1)
+			{
+				$family.=$protein_id."\t"."Orphans\n";
+				$alignment.= $hit_alignment;
+			}
+	 	}
+    	}
+	return ($alignment, $family);
 }
 
 =head2 compare_a_b
-=cut
 
+
+=cut
 sub compare_a_b
 {
         my ($ha, $hb) = @_;
@@ -1153,12 +1111,10 @@ sub compare_a_b
 
 =head2 seq_to_hash
 
- Function:
-
- Input:
-
- Output:
-
+ Function: split nucleotide/protein sequence, convert nucleotide to protien
+ Input:    fasta sequence
+ Output:   1) protein seq hash
+           2) RNA/DNA translated seq hash
 =cut
 sub seq_to_hash
 {
@@ -1187,60 +1143,8 @@ sub seq_to_hash
 	return (\%seq_hash,\%converted_seq_hash);
 }
 
-=head2 parse_hmmscan_result
-=cut
-sub parse_parsed_hmmscan_result
-{
-	my $hmm_scan_file = shift;
-
-	my %hmm_result;
-
-	my $all_line;
-	my $hfh = IO::File->new($hmm_scan_file) || die "Can not open hmm scan result: $hmm_scan_file \n";
-	while(<$hfh>)
-	{
-		if ($_ =~ m/Query:/ && $j == 12)
-		{
-			$all_line.= "//\n".$_;
-		}
-		else
-		{
-			$all_line.= $_;
-		}
-	}
-	$hfh->close;
-	
-	my @result = split(/\/\/\n/, $all_line);
-
-	my ($qid, $hr);
-
-	foreach my $res (@result)
-	{
-		my @line = split(/\n/, $res);
-		
-		for(my $i=0; $i<@line; $i++)
-		{
-			if ($i == 0)
-			{
-				my @a = split(/\s+/, $line[$i]);
-				$qid = $a[1];
-			}
-			elsif ($i == 5)
-			{
-				my $hr = $line[$i];
-				$hr =~ s/\s+/\t/;
-				if ($hr =~ m/PPC:/) { $hmm_result{$qid} = $hr; }
-			}
-			else
-			{
-				next;
-			}
-		}
-	}
-	return %hmm_result;
-}
-
 =head2 pk_to_hash
+
 =cut
 sub pk_to_hash
 {
@@ -1283,23 +1187,23 @@ sub cutoff
 }
 
 =head2 get_classification
+
+ output the hit with highest score
+
 =cut
 sub get_classification
 {
 	my $simple_hmm2_result = shift;
 	my @array = split(/\n/, $simple_hmm2_result);
 
-	my %hit;
-
+	my %hit; my %score;
 	for(my $i=0; $i<@array; $i++)
 	{
 		my @a = split(/\t/, $array[$i]);
 
 		if (defined $hit{$a[0]})
 		{
-                	my $high_score = $score{$a[0]};
-
-			if ($a[2] > $high_score)
+			if ($a[2] > $score{$a[0]})
 			{
  				$hit{$a[0]} = $a[1];
 				$score{$a[0]} = $a[2];
