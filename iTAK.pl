@@ -362,7 +362,7 @@ if ($mode =~ m/^p|b$/i)
 
 	foreach my $ppid (sort keys %pkinase_id)
 	{
-		print $ca_fh $ppid."\t1.Other\n";
+		print $ca_fh $ppid."\tPPC:1.Other\n";
 
 		if (defined $pkinase_aln{$ppid})
 		{
