@@ -33,6 +33,10 @@ HMMER3 (required). Provided in iTAK.
 2.0 GB free disk space for installation.
 
 Release notes
+iTAK v1.4 - 06/26/11
+
+iTAK v1.3 - 06/26/11
+
 iTAK v1.2 - 06/26/11
 
 iTAK v1.1 - 06/03/11

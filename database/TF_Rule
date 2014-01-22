@@ -1,3 +1,5 @@
+# this rule is update on 06/06/2013
+# discard PF05909 (IWS_c) who is merged into PF08711 (Med26)
 Family Name:BBR/BPC
 Required Domain:PF06217
 Forbidden Domain:
@@ -374,7 +376,7 @@ Forbidden Domain:PF00628
 Required Mode:one
 //
 Family Name:IWS1
-Required Domain:PF08711#PF05909
+Required Domain:PF08711
 Forbidden Domain:
 Required Mode:one
 //

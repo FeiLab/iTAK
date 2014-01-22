@@ -1,8 +1,13 @@
 #!/usr/bin/perl
 
 =head
-v 1.3 May-20-2013
-      update some small bugs
+
+v 1.4 Jan-19-2014
+      new category system for plant protein kinase, from RKD and HMM build by Shiu et al. 2012 
+      update the hmmscan to version 3.1, 2x faster than hmm 3.0
+
+v 1.3 Jun-22-2013
+      update some small bugs, Pfam V27, WAK and WAKL family, a switch for transponsase filter
 
 v 1.2 Aug-26-2011
       report unusual sequences
@@ -26,8 +31,8 @@ use Bio::SearchIO;
 use Getopt::Long;
 
 my $usage = q/
-UPDATE: Aug-26-2011
-VERSION: v1.2
+UPDATE: Jan-19-2014
+VERSION: v1.4
 USAGE: 
 	perl iTAK.pl [parameters]
 
@@ -77,6 +82,15 @@ $debug ||= 0;
 # 3. mode b, identify both					#
 #################################################################
 unless ($mode =~ m/^t|p|b$/i) { die $usage."\nPlease input correct mode\n"; }
+
+#################################################################
+# set transposase						#
+#################################################################
+my %transposase = (
+	#"PF01498" => 23.4,	# HTH_Tnp_Tc3_2 	Transposase
+	#"PF11427" => 20.8,	# HTH_Tnp_Tc3_1 	Tc3 transposase
+	#"PF03004" => 21.6,	# Transposase_24 	Plant transposase (Ptta/En/Spm family)
+);
 
 #################################################################
 # check input_seq files						#
@@ -207,6 +221,8 @@ my ($ga_hash, $desc_hash) = ga_to_hash($ga_table);
 # PlantsPHMM3.hmm ; Hmmer3 format				#
 #################################################################
 my $plantp_hmm_3  = $dbs_dir."/PlantsPHMM3_89.hmm";
+my $rkd_hmm_3 = $dbs_dir."/PlantsPHMM3_89.hmm";
+my $shiu_hmm_3 = $dbs_dir."/Plant_Pkinase_fam.hmm";
 
 #################################################################
 # protein kinases Cat ID and It's desc to hash.			#
@@ -233,7 +249,7 @@ my ($all_hits, $all_detail) = parse_hmmscan_result($tmp_hmm_result);
 # Step 2
 # the parsed hmmscan result was used in TFs prediction
 my $tmp_rule = $tf_rule;
-my ($tmp_align, $tmp_family) = identify_domain($all_hits, $all_detail, $tmp_rule);
+my ($tmp_align, $tmp_family) = identify_domain($all_hits, $all_detail, $tmp_rule, \%transposase);
 
 # Step3
 # output the TFs prediction result 
@@ -295,7 +311,7 @@ if ($mode =~ m/^p|b$/i)
 	# Step 3.1 produce protein kinase sequence
 	# pkinase_id has the protein ID with high GA score in Pfam Kinase domain
 	# key: gene_id, value: 1; 
-	my %pkinase_id = cutoff($all_hits);
+	my %pkinase_id = cutoff($all_hits, \%transposase);
 
 	# pkinase_aln
 	# key: gene_id, value: align detail for gene
@@ -307,6 +323,7 @@ if ($mode =~ m/^p|b$/i)
 
 	if ($pk_seq_num > 0)
 	{
+		# save protein kinase sequence to fasta file (with protein kinases domain)
 		my $pk_fh = IO::File->new(">".$protein_kinase_seq) || die "Can not open protein kinase sequence file: $protein_kinase_seq\n";
 		foreach my $pid (sort keys %pkinase_id)
 		{
@@ -323,79 +340,116 @@ if ($mode =~ m/^p|b$/i)
 
 		# Step 3.3 Get Protein Kinases Classification using hmmscan
 		# Step 3.3.1 hmmscan
-		my $tmp_pk_hmmpfam_3 = "$temp_dir/temp_hmm3_result2";
+		my $tmp_plantsp_hmm_result = "$temp_dir/temp_plantsp_hmm_result";
+		my $tmp_rkd_hmm_result 	   = "$temp_dir/temp_rkd_hmm_result";
+		my $tmp_shiu_hmm_result    = "$temp_dir/temp_shiu_hmm_result";
 
-	my $hmmscan_command3 = $bin_dir."/hmmscan --acc --notextw --cpu $cpus -o $tmp_pk_hmmpfam_3 $plantp_hmm_3 $protein_kinase_seq";
+		my $plantsp_hmmscan_command = $bin_dir."/hmmscan --acc --notextw --cpu $cpus -o $tmp_plantsp_hmm_result $plantp_hmm_3 $protein_kinase_seq";
+		my $rkd_hmmscan_command     = $bin_dir."/hmmscan --acc --notextw --cpu $cpus -o $tmp_rkd_hmm_result     $rkd_hmm_3    $protein_kinase_seq";
+		my $shiu_hmmscan_command    = $bin_dir."/hmmscan --acc --notextw --cpu $cpus -o $tmp_shiu_hmm_result    $shiu_hmm_3   $protein_kinase_seq";
 
-	unless (-s $tmp_pk_hmmpfam_3)
-	{
-		system($hmmscan_command3) && die "Error at hmmscan command: $hmmscan_command3\n";
-	}
+		print $plantsp_hmmscan_command if $debug == 1;
+		print $rkd_hmmscan_command if $debug == 1;
+		print $shiu_hmmscan_command if $debug == 1;
+
+		unless (-s $tmp_plantsp_hmm_result) { system($plantsp_hmmscan_command) && die "Error at hmmscan command: $plantsp_hmmscan_command\n"; }
+		#unless (-s $tmp_rkd_hmm_result)  { system($rkd_hmmscan_command) && die "Error at hmmscan command: $rkd_hmmscan_command\n"; }	
+		unless (-s $tmp_shiu_hmm_result) { system($shiu_hmmscan_command) && die "Error at hmmscan command: $shiu_hmmscan_command\n"; }
+		
+		# Step 3.3.2 parse hmmscan result
+		my ($hmm3_simple_result, $hmm3_simple_align) = parse_hmmscan_result($tmp_plantsp_hmm_result);
+		#my ($hmm3_rkd_result, $hmm3_rkd_align) = parse_hmmscan_result($tmp_rkd_hmm_result);
+		my ($hmm3_shiu_result, $hmm3_shiu_align) = parse_hmmscan_result($tmp_shiu_hmm_result);
+
+		# Step 3.3.3 get classification info base simple hmminfo, means get best hits of simple result, then add annotation and output alignment file
+		my %pkinases_cat = get_classification($hmm3_simple_result);
+		my %shiu_cat = get_classification($hmm3_shiu_result);
+		#my %rkd_cat = get_classification($hmm3_rkd_result);
+
+		#################################################
+		# output PlantsP alignment and classification 	#
+		#################################################
+		my $protein_kinase_aln1 = $output_dir."/".$input_seq."_pkaln1";
+		my $protein_kinase_cat1 = $output_dir."/".$input_seq."_pkcat1";
 	
-	print $hmmscan_command3 if $debug == 1;
+		my $ca_fh1 = IO::File->new(">".$protein_kinase_cat1) || die "Can not open protein kinase sequence file: $protein_kinase_cat1 $!\n";
+		my $al_fh1 = IO::File->new(">".$protein_kinase_aln1) || die "Can not open protein kinase sequence file: $protein_kinase_aln1 $!\n";
+
+		foreach my $pid (sort keys %pkinases_cat)
+		{
+			if (defined $pkinase_aln{$pid})
+			{
+				print $al_fh1 $pkinase_aln{$pid};
+			}
+			else
+			{
+				die "Error! Do not have alignments in hmm3 parsed result\n";
+			}
+			delete $pkinase_id{$pid};	
+		}
+
+		foreach my $pid (sort keys %pkinase_id)
+		{
+			print $ca_fh1 $pid."\tPPC:1.Other\n";
+
+			if (defined $pkinase_aln{$pid})
+			{
+				print $al_fh1 $pkinase_aln{$pid};
+			}
+			else
+			{
+				die "Error! Do not have alignments in hmm3 parsed result\n";
+			}
+		}
+		$al_fh1->close;
+
+		# Step 3.3.4 find WNK1 domain in 4.1.5 cat;
+		# $input, $hmm, $score, $cat_id, $new_cat_id
+		%pkinases_cat = get_wnk1(\%pkinases_cat, "$dbs_dir/wnk1_hmm_domain/WNK1_hmm" , "30" ,"PPC:4.1.5", "PPC:4.1.5.1");
+		$$pkid_des{"PPC:4.1.5.1"} = "WNK like kinase - with no lysine kinase";
+
+		%pkinases_cat = get_wnk1(\%pkinases_cat, "$dbs_dir/mak_hmm_domain/MAK_hmm" , "460.15" ,"PPC:4.5.1", "PPC:4.5.1.1");
+		$$pkid_des{"PPC:4.5.1.1"} = "Male grem cell-associated kinase (mak)";
 	
-	# Step 3.3.2 parse hmmscan result
-	my ($hmm3_simple_result, $hmm3_simple_align) = parse_hmmscan_result($tmp_pk_hmmpfam_3);
+		foreach my $pid (sort keys %pkinases_cat) {
+			print $ca_fh1 $pid."\t".$pkinases_cat{$pid}."\t".$$pkid_des{$pkinases_cat{$pid}}."\n";
+		}
+		$ca_fh1->close;
 
-	# Step 3.3.3 get classification info base simple hmminfo, means get best hits of simple result, then add annotation and output alignment file
-	my %pkinases_cat = get_classification($hmm3_simple_result);
 
-	my $protein_kinase_aln = $output_dir."/".$input_seq."_pkaln";
-	my $protein_kinase_cat = $output_dir."/".$input_seq."_pkcat";
-	
-	my $ca_fh = IO::File->new(">".$protein_kinase_cat) || die "Can not open protein kinase sequence file: $protein_kinase_cat";
-	my $al_fh = IO::File->new(">".$protein_kinase_aln) || die "Can not open protein kinase sequence file: $protein_kinase_aln";
+		#################################################
+                # output Shiu alignment and classification   	#
+                #################################################
+                my $protein_kinase_aln2 = $output_dir."/".$input_seq."_pkaln2";
+                my $protein_kinase_cat2 = $output_dir."/".$input_seq."_pkcat2";
 
-	foreach my $pid (sort keys %pkinases_cat)
+                my $ca_fh2 = IO::File->new(">".$protein_kinase_cat2) || die "Can not open protein kinase sequence file: $protein_kinase_cat2 $!\n";
+                my $al_fh2 = IO::File->new(">".$protein_kinase_aln2) || die "Can not open protein kinase sequence file: $protein_kinase_aln2 $!\n";
+		foreach my $pid (sort keys %shiu_cat) { print $ca_fh2 $pid."\t".$shiu_cat{$pid}."\n"; }
+		print $al_fh2 $hmm3_shiu_align;
+		$ca_fh2->close;
+		$al_fh2->close;
+
+		#################################################
+		# output rkd alignment and classification       #
+		#################################################
+		my $protein_kinase_aln3 = $output_dir."/".$input_seq."_pkaln3";
+		my $protein_kinase_cat3 = $output_dir."/".$input_seq."_pkcat3";
+
+		#my $ca_fh3 = IO::File->new(">".$protein_kinase_cat3) || die "Can not open protein kinase sequence file: $protein_kinase_cat3 $!\n";
+		#my $al_fh3 = IO::File->new(">".$protein_kinase_aln3) || die "Can not open protein kinase sequence file: $protein_kinase_aln3 $!\n";
+		#$ca_fh3->close;
+		#$al_fh3->close;
+
+		# report protein kinase number
+		print $pk_seq_num." protein kinases were identified.\n";
+    	}
+	else
 	{
-		if (defined $pkinase_aln{$pid})
-		{
-			print $al_fh $pkinase_aln{$pid};
-		}
-		else
-		{
-			die "Error! Do not have alignments in hmm3 parsed result\n";
-		}
-
-		delete $pkinase_id{$pid};	
+		print "No protein kinase was identified.\n";
 	}
-
-	foreach my $ppid (sort keys %pkinase_id)
-	{
-		print $ca_fh $ppid."\tPPC:1.Other\n";
-
-		if (defined $pkinase_aln{$ppid})
-		{
-			print $al_fh $pkinase_aln{$ppid};
-		}
-		else
-		{
-			die "Error! Do not have alignments in hmm3 parsed result\n";
-		}
-	}
-	$al_fh->close;
-
-	# Step 3.3.4 find WNK1 domain in 4.1.5 cat;
-	# $input, $hmm, $score, $cat_id, $new_cat_id
-	%pkinases_cat = get_wnk1(\%pkinases_cat, "$dbs_dir/wnk1_hmm_domain/WNK1_hmm" , "30" ,"PPC:4.1.5", "PPC:4.1.5.1");
-	$$pkid_des{"PPC:4.1.5.1"} = "WNK like kinase - with no lysine kinase";
-
-	%pkinases_cat = get_wnk1(\%pkinases_cat, "$dbs_dir/mak_hmm_domain/MAK_hmm" , "460.15" ,"PPC:4.5.1", "PPC:4.5.1.1");
-	$$pkid_des{"PPC:4.5.1.1"} = "Male grem cell-associated kinase (mak)";
-	
-	foreach my $pid (sort keys %pkinases_cat)
-	{
-		print $ca_fh  $pid."\t".$pkinases_cat{$pid}."\t".$$pkid_des{$pkinases_cat{$pid}}."\n";
-	}
-	$ca_fh->close;
-
-	print $pk_seq_num." protein kinases were identified.\n";
-    }
-    else
-    {
-	print "No protein kinase was identified.\n";
-    }
 }
+
 #################################################################
 # delete temp folder						#
 #################################################################
@@ -935,7 +989,7 @@ sub check_family
 =cut
 sub identify_domain
 {
-	my ($all_hits, $all_detail, $rule) = @_;
+	my ($all_hits, $all_detail, $rule, $transposase) = @_;
 
 	my $alignment = "";
 	my $family = "";
@@ -981,6 +1035,20 @@ sub identify_domain
 
 		my @convert_domain = split(/\t/, $convert_domain);
 
+		# checking transposase
+		my $has_transposase = 0;
+		foreach my $domain_id ( @convert_domain )
+		{
+			if (defined $$transposase{$domain_id}) { $has_transposase = 1; }
+		}
+
+		if ($has_transposase == 1) 
+		{
+			print "Protein $protein_id was removed for including transposase: $convert_domain\n";
+			next; 
+		}
+
+		# checking family
 		for(my $di=0; $di<@did; $di++)
 		{
 			my $domain_id = $$hsp_hit{$did[$di]};  # convert uid to domain id
@@ -1172,17 +1240,38 @@ output: selected pkinase id
 =cut
 sub cutoff
 {
-	my $parsed_result = shift;
+	my ($parsed_result, $transposase) = @_;
 	my @parsed_result = split(/\n/, $parsed_result);
 
-	my %pk_id;
+	my %pk_id; my %transposase_id;
 
+	# check the input sequence
 	for(my $i=0; $i<@parsed_result; $i++)
 	{
 		my @a = split(/\t/, $parsed_result[$i]);
-		if ($a[1] eq "PF00069.18" && $a[2] >= 20.4 ) { $pk_id{$a[0]} = 1; }
-		if ($a[1] eq "PF07714.10" && $a[2] >= 20.3 ) { $pk_id{$a[0]} = 1; }
+
+		# check protein kinase ID and put it to hash
+		if ($a[1] eq "PF00069.20" && $a[2] >= 20.4 ) { $pk_id{$a[0]} = 1; }
+		if ($a[1] eq "PF07714.12" && $a[2] >= 20.3 ) { $pk_id{$a[0]} = 1; }
+
+		# check transposase ID and put it to hash
+		my $pfam_id = $a[1]; $pfam_id =~ s/\..*//ig;
+		if (defined $$transposase{$pfam_id} && $a[2] >= $$transposase{$pfam_id}) 
+		{
+			$transposase_id{$a[0]} = 1;
+		}
 	}
+
+	# remove the transposase from the protein kinase
+	foreach my $protein (sort keys %pk_id)
+	{
+		if (defined $transposase_id{$protein})
+		{
+			delete $pk_id{$protein};
+			print "Protein $protein was removed for including transposase, PKs identify process\n";
+		}
+	}
+
 	return %pk_id;
 }
 
@@ -1327,6 +1416,9 @@ sub get_wnk1
 	return %pk_cat;
 }
 
+=head2
+
+=cut
 sub tf_family_cat_to_hash
 {
 	my $input_file = shift;
