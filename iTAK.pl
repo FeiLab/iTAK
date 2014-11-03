@@ -1,23 +1,13 @@
 #!/usr/bin/perl
 
-=head
-
-v 1.4 Jan-19-2014
-      new category system for plant protein kinase, from RKD and HMM build by Shiu et al. 2012 
-      update the hmmscan to version 3.1, 2x faster than hmm 3.0
-
-v 1.3 Jun-22-2013
-      update some small bugs, Pfam V27, WAK and WAKL family, a switch for transponsase filter
-
-v 1.2 Aug-26-2011
-      report unusual sequences
-
-v 1.1 Jun-03-2011
-      remove unsignificiant domain using GA score
-
-v 1.0 Dec-14-2010
-      first stable version 
-
+=head1
+[Sep-08-2014][v1.5]: combination rules for plantTFDB and plnTFDB, new classification system for future rule update
+[Jan-19-2014][v1.4]: new category system for plant protein kinase, from RKD and HMM build by Shiu et al. 2012 
+		     update the hmmscan to version 3.1, 2x faster than hmm 3.0
+[Jun-22-2013][v1.3]: update some small bugs, Pfam V27, WAK and WAKL family, a switch for transponsase filter
+[Aug-26-2011][v1.2]: report unusual sequences
+[Jun-03-2011][v1.1]: remove unsignificiant domain using GA score
+[Dec-14-2010][v1.0]: first stable version 
 =cut
 
 use strict;
@@ -32,7 +22,7 @@ use Getopt::Long;
 
 my $usage = q/
 UPDATE: Jan-19-2014
-VERSION: v1.4
+VERSION: v1.5
 USAGE: 
 	perl iTAK.pl [parameters]
 
@@ -149,18 +139,19 @@ elsif ($seq_format eq "P" || $seq_format eq "p")
 }
 else
 {
-	die "Error at paramter -s $seq_format\n$usage";
+	print "[ERR]paramter -s $seq_format\n$usage"; 
+	exit;
 }
 
 #################################################################
 # create temp folder and then store seq to temp			#
 #################################################################
 my $temp_dir = $input_seq."_itak_temp";
-if (-e $temp_dir) { die "Error, temp folder exist, please delete it before running iTAK\n";  }
+if (-e $temp_dir) { die "[ERR]Temp folder $temp_dir exist, please delete it before running iTAK\n";  }
 else { mkdir($temp_dir); }
 
 my $protein_seq = $temp_dir."/protein_seq";
-my $pfh = IO::File->new(">".$protein_seq) || die "can not open protein sequence file: $protein_seq $!\n";
+my $pfh = IO::File->new(">".$protein_seq) || die $!;
 foreach my $pid (sort keys %seq_hash)
 {
 	print $pfh ">".$pid."\n".$seq_hash{$pid}."\n";
@@ -171,7 +162,7 @@ $pfh->close;
 # check and create output folder				#
 #################################################################
 my $output_dir = $output_fd;
-if (-e $output_dir ) { die "Error, output folder exist, please delete it before running iTAK\n"; }
+if (-e $output_dir ) { die "[ERR]output folder $output_dir exist, please delete it before running iTAK\n"; }
 else { mkdir($output_dir); }
 
 #################################################################
@@ -179,8 +170,8 @@ else { mkdir($output_dir); }
 #################################################################
 my $bin_dir = ${FindBin::RealBin}."/bin";
 my $dbs_dir = ${FindBin::RealBin}."/database";
-unless (-e $bin_dir) { die "bin directory does not exist.\n$bin_dir\n"; }
-unless (-e $dbs_dir) { die "database directory does not exist.\n $dbs_dir\n"; }
+unless (-e $bin_dir) { die "[ERR]bin directory does not exist.\n$bin_dir\n"; }
+unless (-e $dbs_dir) { die "[ERR]database directory does not exist.\n $dbs_dir\n"; }
 
 #################################################################
 #--------Default Variables for Transcription Factors------------#
@@ -196,11 +187,9 @@ my $hmm3_db = $dbs_dir."/TFHMM_3.hmm";
 # Rules for identify Transcription Factors			#
 #################################################################
 my $tf_rule = $dbs_dir."/TF_Rule";
-unless (-s $tf_rule) { die "Rules for Transcription Factors domains do not exist.\n"; }
+unless (-s $tf_rule) { die "[ERR]Rules for Transcription Factors domains do not exist.\n"; }
 
-#################################################################
-# category of transcription factor and regulator		#
-#################################################################
+# put TFs and TRs family to hash
 my $tf_cat = $dbs_dir."/TF_family";
 my %tf_family_cat = tf_family_cat_to_hash($tf_cat);
 
@@ -793,6 +782,9 @@ sub parse_format_result
 	return (\%out_hash, \%hsp_hit_id, \%hsp_detail);
 }
 
+=head2
+
+
 =head2 parse_rule
 
  Function: parse rule file, return three hash.
@@ -804,10 +796,27 @@ sub parse_format_result
 	return hash2 -- key: family_name, value: domain_id1 # domain_id2 # ... # domain_idn
 	return hash3 -- key: family_name, value: mode
 =cut
+
 sub parse_rule
 {
 	my $rule_file = shift;
+	
+	# put rules to hash: key: rid (order), name, required, required num, forbidden 
+	my %rules;
+	my $fh = IO::File->new($rule_file) || die $!;
+	while(<$fh>)
+	{
+		chomp;
+		next if $_ =~ m/^#/;
+		my @a = split(/:/, $_, 2)
+	}
+	$fh->close;
+}
 
+
+sub parse_rule
+{
+	my $rule_file = shift;
 	my %required; my %forbidden; my %mode;
 	my ($family_name, $required_d, $forbidden_d, $required_m);
  
@@ -832,6 +841,9 @@ sub parse_rule
 	$fh->close;
 
 	return (\%required, \%forbidden, \%mode);
+
+
+
 }
 
 =head2 get_domain_id
@@ -983,9 +995,7 @@ sub check_family
 }
 
 =head2 identify_domain
- 
  identify Transcription Factors conde + finde Protein Kinases domains 
-
 =cut
 sub identify_domain
 {
@@ -1013,9 +1023,16 @@ sub identify_domain
 	# 4. Classify the proteins and output the results to files;
     	foreach my $protein_id (sort keys %$pid_did)
     	{
-		#########################################################
-		# for transcription factors				#
-		#########################################################
+
+		foreach my $rid (sort keys %rules)
+		{
+
+		}
+		
+
+
+
+
 		my $is_family = 0;
 
 		my @did = split(/\t/, $$pid_did{$protein_id});
@@ -1047,6 +1064,9 @@ sub identify_domain
 			print "Protein $protein_id was removed for including transposase: $convert_domain\n";
 			next; 
 		}
+
+
+
 
 		# checking family
 		for(my $di=0; $di<@did; $di++)
